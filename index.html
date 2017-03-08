@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meat charset = "utf-8" />
+	<title>three01</title>
+	<script type="text/javascript" src="http://omhm8141g.bkt.clouddn.com/three.min.js"></script>
+	<style type="text/css">
+	body{margin:0; overflow:hidden;}
+	</style>
+</head>
+<body>
+<div id="WebGl-output"></div>
+<script type="text/javascript">
+	//创建场景
+		var scene = new THREE.Scene();
+
+	//创建灯光
+		var spotLight = new THREE.SpotLight(0xffffff,1);//创建点光源
+			spotLight.position.set(-40,0,100);
+		var spotLighthelper = new THREE.PointLightHelper(spotLight,10);
+		scene.add(spotLighthelper);
+			scene.add(spotLight);
+		var ambient = new THREE.AmbientLight(0xffffff,0.3);
+			scene.add(ambient);		
+
+	//创建相机
+		var camera = new THREE.PerspectiveCamera(45,640/1138,0.1,1000);//创建相机window.innerWidth/window.innerHeight
+		camera.position.x =0;
+		camera.position.y = 0;
+		camera.position.z = 120;
+		camera.lookAt(scene.position);
+
+	//创建渲染器
+		var renderer = new THREE.WebGLRenderer();//创建渲染器
+		renderer.setClearColor(0xfef8e1,1.0);//设置背景色
+		renderer.setSize(window.innerWidth,window.innerHeight);//设置渲染范围
+		renderer.setFaceCulling(THREE.CullFaceFront,THREE.FrontFaceDirectionCW);
+		//renderer.shadowDarMapSoft = true;
+
+	//创建物体	
+		var V1 =0.5*window.innerWidth;
+		function aSheet(mapURL,angle){
+			this.mapURL = mapURL;
+			this.angle = angle;
+			this.R1 = 0;
+			//设置父元素为线，确定旋转中心
+		var lineMaterial = new THREE.LineBasicMaterial({color:0x1f18d0});
+		var lineGeometry = new THREE.Geometry();
+			lineGeometry.vertices.push(new THREE.Vector3(0,0,0));
+			lineGeometry.vertices.push(new THREE.Vector3(0,50,0));
+			this.line = new THREE.Line(lineGeometry,lineMaterial);
+			this.line.position.x = 32;
+			scene.add(this.line);
+
+
+			//每一片旋转的面
+		var texture1 = new THREE.ImageUtils.loadTexture(this.mapURL);
+			texture1.repeat.set(1,1);
+		var planeGeometry = new THREE.PlaneGeometry(64,108,1);//创建平面形状
+		var planeMaterial = new THREE.MeshPhongMaterial({map:texture1,side:THREE.DoubleSide});//创建网状基本材料
+			planeMaterial.transparent = true;
+			this.plane = new THREE.Mesh(planeGeometry,planeMaterial);//添加材质
+			this.plane.position.x = -32;
+			this.plane.position.y = 0;
+			this.plane.position.z = 0;
+			this.line.add(this.plane);
+		}
+
+		//创建所有面
+		var Sheet1 = new aSheet('http://omge1g0w6.bkt.clouddn.com/333-1.png',0);
+		var Sheet2 = new aSheet('http://omge1g0w6.bkt.clouddn.com/333-2.png',3.14*2/7*1);
+		var Sheet3 = new aSheet('http://omge1g0w6.bkt.clouddn.com/333-3.png',3.14*2/7*2);
+		var Sheet4 = new aSheet('http://omge1g0w6.bkt.clouddn.com/333-4.png',3.14*2/7*3);
+		var Sheet5 = new aSheet('http://omge1g0w6.bkt.clouddn.com/333-5.png',3.14*2/7*4);
+		var Sheet6 = new aSheet('http://omge1g0w6.bkt.clouddn.com/333-6.png',3.14*2/7*5);
+		var Sheet7 = new aSheet('http://omge1g0w6.bkt.clouddn.com/333-7.png',3.14*2/7*6);
+
+//创建动画
+		function rendererScene(){
+			Sheet1.R1 = Sheet2.R1 =Sheet3.R1 =Sheet4.R1 =Sheet5.R1 =Sheet6.R1 =Sheet7.R1 +=0.005;
+
+			Sheet1.line.rotation.y = Sheet1.angle+Sheet1.R1;
+			Sheet2.line.rotation.y = Sheet2.angle+Sheet2.R1;
+			Sheet3.line.rotation.y = Sheet3.angle+Sheet3.R1;
+			Sheet4.line.rotation.y = Sheet4.angle+Sheet4.R1;
+			Sheet5.line.rotation.y = Sheet5.angle+Sheet5.R1;
+			Sheet6.line.rotation.y = Sheet6.angle+Sheet6.R1;
+			Sheet7.line.rotation.y = Sheet7.angle+Sheet7.R1;
+
+			requestAnimationFrame(rendererScene);
+			renderer.render(scene,camera);
+		}
+
+		document.getElementById('WebGl-output').appendChild(renderer.domElement);
+		rendererScene();//将场景和相机交给渲染器
+</script>
+</body>
+</html>
